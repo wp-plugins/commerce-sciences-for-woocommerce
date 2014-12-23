@@ -1,4 +1,4 @@
-=== Plugin Name ===
+=== Commerce Sciences integration ===
 Contributors: roykleincs
 Tags: campaigns,personalization,
 Requires at least: 3.0.1
@@ -7,7 +7,7 @@ Stable tag: trunk
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Commerce Sciences provides a conversion optimization and personalization service to your online business. 
+Conversion optimization and personalization service for your online business or WooCommerce store.
 
 == Description ==
 
