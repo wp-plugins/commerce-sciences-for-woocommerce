@@ -1,13 +1,13 @@
 <?php
 /**
  * @package CommerceSciences_WP_WOO
- * @version 1.0
+ * @version 1.1
  */
 /*
 Plugin Name: Commerce Sciences For WooCommerce
 Description: Smoothly integrate Commerce Sciences' powerful campaigns platform with your WooCommerce store.
 Author: Commerce Sciences
-Version: 1.0
+Version: 1.1
 Author URI: http://app.commercesciences.com?a=woo0
 */
 
@@ -22,6 +22,50 @@ Author URI: http://app.commercesciences.com?a=woo0
 			if (!empty($tag)) {
 				echo $tag;
 			}
+		}
+	}
+
+	function cp_wp_woo_cartPage() {
+		try {
+			if (!is_ajax()) {
+		        echo '<script>window._cshqCart = {};	';
+
+		        foreach ( WC()->cart->get_cart() as $cart_item_key => $cart_item ) {
+
+		            $_cart = WC()->cart->get_cart();
+		            $_product = $_cart[$cart_item_key];
+		            $_product2 = wc_get_product($_product['product_id']);
+		            $price = $_product2->get_price_including_tax();
+		            $quantity = $_product['quantity'];
+		            $currency = get_woocommerce_currency();
+		            echo 'window._cshqCart["'.$_product2->id.'"] = {';
+		            echo '								Quantity:'.$quantity.',';
+		            echo '								UnitPrice:"'.$price.'",';
+		            echo '								Denomination:"'.$currency.'"';
+		            echo '};';
+
+		        }
+		        echo '</script>';
+		    } 
+	    }catch(Exception $e) {
+	    }
+    }
+
+    function cp_wp_woo_thankyouPage($order_id) {
+    	try {
+    		if (!is_ajax()) {
+				$order = wc_get_order($order_id);
+				echo '<script type="text/javascript">';
+			    echo '    var _cshq = _cshq || [];';
+			    echo '    _cshq.push(["_reportConversion",';
+			    echo '      "'.$order_id.'",';
+			    echo '      "'.$order->get_total().'",';
+			    echo '      "'.get_woocommerce_currency().'"]';
+			    echo '   );';
+			    echo '</script>';
+			}
+		}catch(Exception $e) {
+
 		}
 	}
 
@@ -171,4 +215,6 @@ Author URI: http://app.commercesciences.com?a=woo0
 	$plugin = plugin_basename(__FILE__); 
 	add_filter("plugin_action_links_$plugin", 'cs_wp_woo_settings_link' );
 	add_action('wp_head', 'cs_wp_woo_addTag');
+	add_action("woocommerce_cart_updated", "cp_wp_woo_cartPage");
+	add_action("woocommerce_thankyou", "cp_wp_woo_thankyouPage")
 ?>
